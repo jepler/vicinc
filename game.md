@@ -6,7 +6,7 @@
  - B(): Base price of property
  - P(): Base production of property
  - C: Cash on hand
- - Q: Quantity to purchase
+ - D: Quantity of cash to turn a line blue
 
  - R: Selected row
  - M: Max row to display
@@ -49,12 +49,13 @@ jiffy)
 ~~~~
 1000 gosub 20000
 1010 gosub 21000
-1020 ift<tithengosub22000:t=t+60:goto1020
-1030 getc$:ifc$=""then1000
-1040 ifc$="j"andr<mthenr=r+1
-1040 ifc$="k"andr>0thenr=r-1
-1050 ifc$="b"thengosub23000
-1060 goto1030
+1020 ift<tithengosub22000:gosub20500:t=t+60:goto1020
+1030 ifc>=dgoto1000
+1040 getc$:ifc$=""then1020
+1050 ifc$="j"andr<mthengosub21500:r=r+1:gosub21000
+1060 ifc$="k"andr>0thengosub21500:r=r-1:gosub21000
+1070 ifc$="b"thengosub23000
+1080 goto1020
 ~~~~
 
 ## Utility functions
@@ -70,26 +71,47 @@ jiffy)
 In principle, 10100 is an entry point for printing a string but I never used it.
 
 ### Print the main game screen
+Another entry point at 20500 just updates balances
 ~~~~
 20000 print "{home}vic20 incremental game":print"     accessory":print"  price","production":print
-20010 fori=1tom:printn%(i);"{left} ";a$(i);"{blu}"
-20020 j=fn pr(n%(i))*b(i):ifj<cthenprint"{rvon}";
-20030 gosub10000:print"{rvof}";
-20040 j=p(i)*n%(i):gosub10000:print:next
-20050 print"{home}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}";
-20060 print"income";:gosub24000:gosub10000:print
-20070 print"cash";:j=c:gosub10000:print
-20080 print"k=up j=down b=buy";
-20090 return
+20005 d=1e30
+20010 fori=1tom:gosub20800:next
+20500 print"{home}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}";
+20520 print"income";:gosub24000:gosub10000:print
+20530 print"cash";:j=c:gosub10000:print
+20540 print"k=up j=down b=buy";
+20550 return
+~~~~
+
+### Print property type 'i'
+.. assuming the correct location if entering at 20800, moving to location if entering at 20700
+~~~~
+20700 print"{home}{down}{down}{down}";
+20710 forii=1toi:print"{down}{down}";:next
+20800 printn%(i);"{left} ";a$(i);"{blu}"
+20810 j=fn pr(n%(i))*b(i):ifj<=cthenprint"{rvon}";
+20820 ifj>candj<dthend=j
+20830 gosub10000:print"{rvof}";
+20840 j=p(i)*n%(i):gosub10000:print
+20850 return
 ~~~~
 
 ### Print the selection mark
 ~~~~
 21000 print"{home}{down}{down}{down}";
 21010 fori=1tor:print"{down}{down}";:next
-21020 print">"
+21020 print">";tab(20);"<";
+21030 return
 ~~~~
 
+
+### Print the selection mark
+~~~~
+21500 print"{home}{down}{down}{down}";
+21510 fori=1tor:print"{down}{down}";:next
+21520 print" ";tab(20);" ";
+21030 return
+~~~~
 ### A second has passed, update things
 ~~~~
 22000 gosub24000:c=c+j
@@ -101,7 +123,7 @@ In principle, 10100 is an entry point for printing a string but I never used it.
 23000 ifc<fnpr(n%(r))*b(r)thenreturn
 23010 n%(r)=n%(r)+1:c=c-fnpr(n%(r))*b(r)
 23020 ifr=mandm<xthenm=r+1
-23030 return
+23030 i=r:goto20700
 ~~~~
 
 ### Calculate total income in j
