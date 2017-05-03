@@ -15,6 +15,12 @@ how far we've come in hardware and software in the last 35 years)
 
 ![The game, in xvic](https://raw.githubusercontent.com/jepler/vicinc/master/vicinc.png)
 
+# Development status
+
+The author (@jepler) is not actively using or developing this project.
+Issues and pull requests are not likely to be acted on.
+I would be interested in passing this project to a new maintainer.
+
 # Building and running the software
 
 The game is implemented in "literate basic", which is a markdown file
